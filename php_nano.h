@@ -32,7 +32,7 @@
 # define _PHP_NANO_H_
 
 #define PHP_NANO_EXTNAME "nano"
-#define PHP_NANO_EXTVER "@PACKAGE_VERSION@"
+#define PHP_NANO_EXTVER "1.0.0"
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"

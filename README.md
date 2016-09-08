@@ -40,22 +40,22 @@ use NanoMsg\Exception as NanoException;
 NanoMsg\Nano
 =========================
 
-Base class. Provide static function device (see: http://nanomsg.org/v0.5/nn_device.3.html)
+Base class. Provide static function device (see: http://nanomsg.org/v1.0.0/nn_device.3.html)
 
 Also provided some static constant:
 
-domain of creating socket (see: http://nanomsg.org/v0.5/nn_socket.3.html)
+domain of creating socket (see: http://nanomsg.org/v1.0.0/nn_socket.3.html)
 * Nano::AF_SP - Standard full-blown SP socket
 * Nano::AF_SP_RAW - Raw SP socket. Raw sockets omit the end-to-end functionality found in AF_SP sockets and thus can be used to implement intermediary devices in SP topologies.
 
 Protocol parameter defines the type of the socket, which in turn determines the exact semantics of the socket
 
-* Nano::NN_PAIR (see: http://nanomsg.org/v0.5/nn_pair.7.html) Pair protocol is the simplest and least scalable scalability protocol. It allows scaling by breaking the application in exactly two pieces
-* Nano::NN_REQ  and ::NN_REQ (see: http://nanomsg.org/v0.5/nn_reqrep.7.html) This protocol is used to distribute the workload among multiple stateless workers
-* Nano::NN_PUB and Nano::NN_SUB (see: http://nanomsg.org/v0.5/nn_pubsub.7.html) Broadcasts messages to multiple destinations.
-* Nano::NN_SURVEYOR and Nano::NN_RESPONDENT (see: http://nanomsg.org/v0.5/nn_survey.7.html)
-* Nano::NN_PUSH and Nano::NN_PULL (see: http://nanomsg.org/v0.5/nn_pipeline.7.html)
-* Nano::NN_BUS (see: http://nanomsg.org/v0.5/nn_bus.7.html)
+* Nano::NN_PAIR (see: http://nanomsg.org/v1.0.0/nn_pair.7.html) Pair protocol is the simplest and least scalable scalability protocol. It allows scaling by breaking the application in exactly two pieces
+* Nano::NN_REQ  and ::NN_REQ (see: http://nanomsg.org/v1.0.0/nn_reqrep.7.html) This protocol is used to distribute the workload among multiple stateless workers
+* Nano::NN_PUB and Nano::NN_SUB (see: http://nanomsg.org/v1.0.0/nn_pubsub.7.html) Broadcasts messages to multiple destinations.
+* Nano::NN_SURVEYOR and Nano::NN_RESPONDENT (see: http://nanomsg.org/v1.0.0/nn_survey.7.html)
+* Nano::NN_PUSH and Nano::NN_PULL (see: http://nanomsg.org/v1.0.0/nn_pipeline.7.html)
+* Nano::NN_BUS (see: http://nanomsg.org/v1.0.0/nn_bus.7.html)
 
 Nanomsg library support 4 network/communication protocol at now: 
 
@@ -66,7 +66,7 @@ Nanomsg library support 4 network/communication protocol at now:
 
 Performance note: ipc vs inproc at same machine has 2х - 4х slow (tested NN_PAIR socket), tcp vs ipc 3х - 5х slow, and ws same as tcp at performance. 
 
-For tcp and ws protocol, for bind method, valid IP (not domain name) and port required. For connect - you may use domain name as adress. More see: http://nanomsg.org/v0.5/nn_tcp.7.html
+For tcp and ws protocol, for bind method, valid IP (not domain name) and port required. For connect - you may use domain name as adress. More see: http://nanomsg.org/v1.0.0/nn_tcp.7.html
 
 
 
