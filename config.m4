@@ -16,18 +16,18 @@ if test "$PHP_NANO" != "no"; then
     export PKG_CONFIG_PATH="$PHP_NANO/$PHP_LIBDIR/pkgconfig"
   fi
 
-  if $PKG_CONFIG --exists libnanomsg; then
-    PHP_NANO_VERSION=`$PKG_CONFIG libnanomsg --modversion`
-    PHP_NANO_PREFIX=`$PKG_CONFIG libnanomsg --variable=prefix`
+  if $PKG_CONFIG --exists nanomsg; then
+    PHP_NANO_VERSION=`$PKG_CONFIG nanomsg --modversion`
+    PHP_NANO_PREFIX=`$PKG_CONFIG nanomsg --variable=prefix`
 
     AC_MSG_RESULT([found version $PHP_NANO_VERSION, under $PHP_NANO_PREFIX])
-    PHP_NANO_LIBS=`$PKG_CONFIG libnanomsg --libs`
-    PHP_NANO_INCS=`$PKG_CONFIG libnanomsg --cflags`
+    PHP_NANO_LIBS=`$PKG_CONFIG nanomsg --libs`
+    PHP_NANO_INCS=`$PKG_CONFIG nanomsg --cflags`
 
     PHP_EVAL_LIBLINE($PHP_NANO_LIBS, NANO_SHARED_LIBADD)
     PHP_EVAL_INCLINE($PHP_NANO_INCS)
   else
-    AC_MSG_ERROR(Unable to find usable libnanomsg installation)
+    AC_MSG_ERROR(Unable to find usable nanomsg installation)
   fi
 
   PHP_ADD_EXTENSION_DEP(nano, spl)
