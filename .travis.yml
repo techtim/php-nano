@@ -17,11 +17,11 @@ notifications:
 before_script:
     - git clone https://github.com/nanomsg/nanomsg.git
     - cd nanomsg
-    - ./autogen.sh
-    - ./configure --prefix="${HOME}/nanomsg-master"
-    - make
-    - make install
-    - cd ..
+    - mkdir build
+    - cd build
+    - cmake .. -DCMAKE_INSTALL_PREFIX=${HOME}/nanomsg-master
+    - cmake --build .
+    - cmake --build . --target install
     - ls -l ${HOME}/nanomsg-master/include/nanomsg
 
 
