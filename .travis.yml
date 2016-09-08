@@ -26,6 +26,7 @@ before_script:
 
 
 script:
+    - cd ${TRAVIS_BUILD_DIR}
     - phpize
     - ./configure --with-nano="${HOME}/nanomsg-master"
     - make

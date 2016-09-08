@@ -10,17 +10,15 @@ How to install
 
 1. Install nanomsg library, see: https://github.com/nanomsg/nanomsg
 2. Install PHP dev tools for extension:  sudo apt-get install php5-dev (for Debian/Ubuntu) or sudo yum install php-devel (Fedora) 
-3. Clone repo at your server, e.g. cd /var/tmp && git clone https://github.com/nanomsg/nanomsg
+3. Clone repo at your server, e.g. cd /var/tmp && git clone https://github.com/treeleaf/php-nano
 4. cd /var/tmp/php-nano
 5. phpize   
-6. configure --enable-nano
+6. configure --with-nano
 7. make
 8. make install
 9. Edit your php.ini file, add extension=nano.so 
 10. Restart FPM service or Apache web server.
 
-
-!Note! tested with PHP 5.6.2 only ( PHP_VERSION : 5.6.9-0+deb8u1  ZEND_VERSION: 2.6.0  ). PHP must support Namespace (PHP 5 >= 5.3.0, see: http://php.net/manual/en/language.namespaces.php)
 
 Base classes and methods
 =========================
