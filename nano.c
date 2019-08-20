@@ -15,15 +15,15 @@
 |       names of its contributors may be used to endorse or promote products        |
 |       derived from this software without specific prior written permission.       |
 +-----------------------------------------------------------------------------------+
-|  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND  | 
-|  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED    |   
+|  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND  |
+|  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED    |
 |  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE           |
 |  DISCLAIMED. IN NO EVENT SHALL MIKKO KOPPANEN OR CONTRIBUTORS BE LIABLE FOR       |
-|  ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES   |   
+|  ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES   |
 |  (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;     |
 |  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND      |
 |  ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT       |
-|  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS    |   
+|  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS    |
 |  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.                     |
 +-----------------------------------------------------------------------------------+
 */
@@ -268,6 +268,7 @@ PHP_METHOD(socket, shutdown)
         zend_throw_exception_ex (php_nano_exception_sc_entry, errno TSRMLS_CC, "Error removing endpoint: %s", nn_strerror (errno));
         return;
     }
+
     RETURN_TRUE;
 }
 /* }}} */
@@ -370,7 +371,7 @@ PHP_METHOD(socket, setsockopt)
     intern = (php_nano_socket_object *) zend_object_store_get_object (getThis () TSRMLS_CC);
 #endif
 
-    // Handle string options 
+    // Handle string options
     if (level == NN_SUB && (option == NN_SUB_SUBSCRIBE || option == NN_SUB_UNSUBSCRIBE)) {
         // Add topic
         convert_to_string (value);
@@ -427,7 +428,7 @@ PHP_METHOD(socket, getsockopt)
             zend_throw_exception_ex (php_nano_exception_sc_entry, 0 TSRMLS_CC, "Failed to convert the handle to PHP stream");
             return;
         }
-        stream->flags |= PHP_STREAM_FLAG_NO_CLOSE;
+        // stream->flags |= PHP_STREAM_FLAG_NO_CLOSE;
         php_stream_to_zval (stream, return_value);
         return;
     } else {
@@ -530,7 +531,13 @@ void s_register_constants (TSRMLS_D)
 static
 void s_nano_socket_object_free_storage (void *object TSRMLS_DC)
 {
-    php_nano_socket_object *intern = (php_nano_socket_object *) object;
+    php_nano_socket_object *intern;
+
+#if PHP_MAJOR_VERSION >= 7
+    intern = (php_nano_socket_object *) ((char *)object - XtOffsetOf(php_nano_socket_object, zo));
+#else
+    intern = (php_nano_socket_object *) object;
+#endif
 
     if (!intern) {
         return;
@@ -541,8 +548,12 @@ void s_nano_socket_object_free_storage (void *object TSRMLS_DC)
         // TODO: error checking
     }
 
+#if PHP_MAJOR_VERSION >= 7
+    zend_object_std_dtor(object);
+#else
     zend_object_std_dtor (&intern->zo TSRMLS_CC);
     efree (intern);
+#endif
 }
 
 /* PHP 5.4 */
@@ -571,8 +582,11 @@ zend_object_value s_nano_socket_object_new_ex (zend_class_entry *class_type, php
     php_nano_socket_object *intern;
 
     /* Allocate memory for it */
-    intern = (php_nano_socket_object *) emalloc (sizeof (php_nano_socket_object));
-    memset (&intern->zo, 0, sizeof (zend_object));
+#if PHP_MAJOR_VERSION >= 7
+    intern = ecalloc(1, sizeof (php_nano_socket_object) + zend_object_properties_size(class_type));
+#else
+    intern = ecalloc(1, sizeof (php_nano_socket_object));
+#endif
 
     intern->s = -1;
 
@@ -584,9 +598,9 @@ zend_object_value s_nano_socket_object_new_ex (zend_class_entry *class_type, php
     object_properties_init (&intern->zo, class_type);
 
 #if PHP_MAJOR_VERSION >= 7
-	intern->zo.handlers = &nano_socket_object_handlers;
+    intern->zo.handlers = &nano_socket_object_handlers;
 
-	return &intern->zo;
+    return &intern->zo;
 #else
     retval.handle = zend_objects_store_put (intern, NULL, (zend_objects_free_object_storage_t) s_nano_socket_object_free_storage, NULL TSRMLS_CC);
     retval.handlers = (zend_object_handlers *) &nano_socket_object_handlers;
@@ -626,6 +640,9 @@ PHP_MINIT_FUNCTION(nano)
     INIT_NS_CLASS_ENTRY (ce_exception, "NanoMsg", "Exception", NULL);
 
 #if PHP_MAJOR_VERSION >= 7
+    nano_socket_object_handlers.offset = XtOffsetOf(php_nano_socket_object, zo);
+    nano_socket_object_handlers.free_obj = (zend_object_free_obj_t) s_nano_socket_object_free_storage;
+
     php_nano_exception_sc_entry = zend_register_internal_class_ex (&ce_exception, zend_exception_get_default (TSRMLS_C) TSRMLS_CC);
     php_nano_exception_sc_entry->ce_flags &= ~ZEND_ACC_FINAL;
 #else
